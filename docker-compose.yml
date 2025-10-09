@@ -7,12 +7,12 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:80"          # Mapeia a porta 3000 do host para a porta 80 do Nginx
+      - "80:80"          # Mapeia a porta 3000 do host para a porta 80 do Nginx
     depends_on:
       - app
     # Variável de ambiente para o frontend saber onde a API está
     environment:
-      VITE_API_URL: http://localhost:8080 
+      VITE_API_URL: http://app:8080 
     restart: always
 
 
@@ -23,9 +23,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     # Mapeia a porta do host para a porta do container
-    ports:
-      - "8080:8080"
-    # Variáveis de ambiente padrão do Spring Boot
+
     environment:
       # O hostname 'db' corresponde ao nome do serviço PostgreSQL abaixo
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/mydatabase
