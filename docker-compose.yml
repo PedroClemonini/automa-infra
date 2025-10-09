@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  # Serviço da Aplicação Spring Boot
+  app:
+    # Constrói a imagem a partir do Dockerfile no diretório atual
+    build: .
+    # Mapeia a porta do host para a porta do container
+    ports:
+      - "8080:8080"
+    # Variáveis de ambiente padrão do Spring Boot
+    environment:
+      # O hostname 'db' corresponde ao nome do serviço PostgreSQL abaixo
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/mydatabase
+      SPRING_DATASOURCE_USERNAME: myuser
+      SPRING_DATASOURCE_PASSWORD: mypassword
+      # Opcional: Perfil Spring para rodar no Docker (Ex: "prod" ou "docker")
+      SPRING_PROFILES_ACTIVE: dev
+    # Garante que o DB inicie antes de a aplicação tentar conectar
+    depends_on:
+      - db
+    restart: on-failure
+
+  # Serviço do Banco de Dados PostgreSQL
+  db:
+    # Imagem oficial do PostgreSQL (recomendado usar uma versão específica)
+    image: postgres:16-alpine
+    # Variáveis de ambiente para configurar o DB
+    environment:
+      POSTGRES_DB: automa-infra
+      POSTGRES_USER: devuser
+      POSTGRES_PASSWORD: devuser
+    # Armazenamento persistente (dados não se perdem ao parar/reiniciar)
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+# Definição do Volume
+volumes:
+  postgres_data:
+
+
+
+
+
+
+
