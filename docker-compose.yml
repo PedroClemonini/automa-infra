@@ -1,10 +1,27 @@
 version: '3.8'
 
 services:
+
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"          # Mapeia a porta 3000 do host para a porta 80 do Nginx
+    depends_on:
+      - app
+    # Variável de ambiente para o frontend saber onde a API está
+    environment:
+      VITE_API_URL: http://localhost:8080 
+    restart: always
+
+
   # Serviço da Aplicação Spring Boot
   app:
     # Constrói a imagem a partir do Dockerfile no diretório atual
-    build: .
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
     # Mapeia a porta do host para a porta do container
     ports:
       - "8080:8080"

@@ -1,5 +1,5 @@
 # Estágio 1: Build (Compilação e Empacotamento)
-FROM openjdk:21-jdk-slim AS build
+FROM openjdk:21-slim AS build
 
 # Define o diretório de trabalho
 WORKDIR /app
@@ -7,6 +7,9 @@ WORKDIR /app
 # Copia os arquivos de build primeiro para otimizar o cache
 # Maven: pom.xml e .mvn (se usar wrapper)
 COPY pom.xml .
+COPY mvnw .
+COPY .mvn .mvn
+RUN chmod +x mvnw
 
 # Copia o código fonte
 COPY src ./src
@@ -17,7 +20,7 @@ RUN ./mvnw package -DskipTests
 
 # Estágio 2: Distribuição (Imagem Final de Execução)
 # Usamos a imagem JRE 21 leve para a execução
-FROM openjdk:21-jre-slim
+FROM eclipse-temurin:21
 
 # Define a porta que o Spring Boot usa por padrão
 EXPOSE 8080
