@@ -12,7 +12,7 @@ services:
       - app
     # Variável de ambiente para o frontend saber onde a API está
     environment:
-      VITE_API_URL: http://app:8080 
+      VITE_API_URL: http://api:8080 
     restart: always
 
 
