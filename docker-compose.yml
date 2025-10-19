@@ -26,9 +26,9 @@ services:
 
     environment:
       # O hostname 'db' corresponde ao nome do serviço PostgreSQL abaixo
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/mydatabase
-      SPRING_DATASOURCE_USERNAME: myuser
-      SPRING_DATASOURCE_PASSWORD: mypassword
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/automa-infra
+      SPRING_DATASOURCE_USERNAME: devuser
+      SPRING_DATASOURCE_PASSWORD: devuser
       # Opcional: Perfil Spring para rodar no Docker (Ex: "prod" ou "docker")
       SPRING_PROFILES_ACTIVE: dev
     # Garante que o DB inicie antes de a aplicação tentar conectar
