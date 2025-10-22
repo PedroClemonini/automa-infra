@@ -23,7 +23,8 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     # Mapeia a porta do host para a porta do container
-
+    ports:
+      - "8080:8080"
     environment:
       # O hostname 'db' corresponde ao nome do serviço PostgreSQL abaixo
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/automa-infra
