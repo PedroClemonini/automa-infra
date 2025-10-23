@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
         @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
         public ResponseEntity<Map<String, String>> handleGenericException(Exception exception) {
             Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("error", "Erro interno no servidor. Entre em contato com o suporte.");
+            errorResponse.put("error", exception.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
