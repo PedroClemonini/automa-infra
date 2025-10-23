@@ -21,13 +21,15 @@ public class VirtualMachineController {
 
     @PostMapping("/clone")
     public ResponseEntity<ResponseDto> createVm(@RequestBody ReceivedVmInfoDto vmInformation) {
+        try {
+            String taskId = vmService.cloneAndConfigureVm(vmInformation);
+            ResponseDto response = new ResponseDto("Clonagem iniciada.", taskId);
+            return ResponseEntity.accepted().body(response); // HTTP 202
 
-        // 3. Delegar a lógica ao Service e obter o ID da Task
-        String taskId = vmService.cloneAndConfigureVm(vmInformation);
-
-        // 4. Construir e retornar a resposta
-        ResponseDto response = new ResponseDto("Clonagem iniciada.", taskId);
-
-        return ResponseEntity.accepted().body(response); // Retorna HTTP 202 Accepted
+        } catch (Exception e) {
+            // Captura o erro do Service e retorna uma resposta de erro amigável
+            ResponseDto errorResponse = new ResponseDto(e.getMessage(), null);
+            return ResponseEntity.internalServerError().body(errorResponse); // HTTP 500
+        }
     }
 }

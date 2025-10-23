@@ -1,6 +1,8 @@
 package com.ifsp.gru.oficinas4.infra.automa_infra.service;
 
+import com.ifsp.gru.oficinas4.infra.automa_infra.ProxmoxProperties; // 1. Importar
 import com.ifsp.gru.oficinas4.infra.automa_infra.dto.CloneRequestDto;
+import org.springframework.http.HttpHeaders; // 2. Importar
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -8,29 +10,26 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class ProxmoxService {
 
     private final WebClient webClient;
+    private final ProxmoxProperties properties; // 3. Declarar o ProxmoxProperties
 
-    // Injeção do WebClient configurado
-    public ProxmoxService(WebClient webClient) {
+    // 4. Injetar o ProxmoxProperties no construtor
+    public ProxmoxService(WebClient webClient, ProxmoxProperties properties) {
         this.webClient = webClient;
+        this.properties = properties;
     }
 
-    /**
-     * Clona uma VM no Proxmox.
-     * @param node O nome do nó Proxmox de origem.
-     * @param vmid O ID da VM de origem (template).
-     * @param cloneRequest O DTO com os parâmetros de clonagem (newid, name, full).
-     * @return O ID da tarefa assíncrona do Proxmox (UPID).
-     */
     public String cloneVm(String node, int vmid, CloneRequestDto cloneRequest) {
         String uri = String.format("/nodes/%s/qemu/%d/clone", node, vmid);
 
         return webClient.post()
                 .uri(uri)
-                .bodyValue(cloneRequest) // O Spring serializa o DTO para JSON
+                // 5. ADICIONAR O CABEÇALHO DE AUTENTICAÇÃO!
+                .header(HttpHeaders.AUTHORIZATION, properties.getApiTokenHeader())
+                .bodyValue(cloneRequest)
                 .retrieve()
-                .bodyToMono(ProxmoxResponse.class) // Proxmox retorna um JSON de resposta (com o UPID)
-                .map(ProxmoxResponse::getData) // Assumindo que a resposta JSON tem a estrutura {"data": "UPID:..."}
-                .block(); // Bloqueia para obter o resultado (pode ser trocado por Mono/Flux para reativo)
+                .bodyToMono(ProxmoxResponse.class)
+                .map(ProxmoxResponse::getData)
+                .block();
     }
 
     // Classe auxiliar para a resposta do Proxmox
