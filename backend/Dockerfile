@@ -1,37 +1,32 @@
-# Estágio 1: Build (Compilação e Empacotamento)
-FROM openjdk:21-slim AS build
+# ============================
+# 🏗️ Estágio 1: Build
+# ============================
+FROM maven:3.9.9-eclipse-temurin-21 AS build
 
-# Define o diretório de trabalho
 WORKDIR /app
 
-# Copia os arquivos de build primeiro para otimizar o cache
-# Maven: pom.xml e .mvn (se usar wrapper)
+# Copia apenas o pom.xml primeiro (melhor cache)
 COPY pom.xml .
-COPY mvnw .
-COPY .mvn .mvn
-RUN chmod +x mvnw
 
-# Copia o código fonte
+# Faz download antecipado das dependências
+RUN mvn dependency:go-offline
+
+# Copia o restante do código
 COPY src ./src
 
-# Se usar Maven Wrapper, execute o build para gerar o JAR
-# O -DskipTests pula os testes.
-RUN ./mvnw package -DskipTests
+# Compila e empacota (sem rodar testes)
+RUN mvn clean package -DskipTests
 
-# Estágio 2: Distribuição (Imagem Final de Execução)
-# Usamos a imagem JRE 21 leve para a execução
-FROM eclipse-temurin:21
+# ============================
+# 🚀 Estágio 2: Execução
+# ============================
+FROM eclipse-temurin:21-jre
 
-# Define a porta que o Spring Boot usa por padrão
+WORKDIR /app
 EXPOSE 8080
 
-# Define o diretório de trabalho
-WORKDIR /app
-
-# Copia o JAR do estágio de build para o estágio de distribuição
-# Ajuste o nome do arquivo JAR conforme a saída do seu build (target/*.jar)
+# Copia o jar do estágio anterior
 COPY --from=build /app/target/*.jar app.jar
 
-# Ponto de entrada para rodar a aplicação Spring Boot
-# O comando 'java -jar' é o padrão
+# Inicia o Spring Boot
 ENTRYPOINT ["java", "-jar", "app.jar"]

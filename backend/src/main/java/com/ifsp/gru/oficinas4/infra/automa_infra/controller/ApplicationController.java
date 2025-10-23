@@ -21,7 +21,6 @@ public class ApplicationController {
 
     @PostMapping
     public Application createApplication(@RequestBody Application contact) {
-
         return applicationRepository.save(contact);
     }
 }

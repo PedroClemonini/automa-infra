@@ -2,6 +2,7 @@ package com.ifsp.gru.oficinas4.infra.automa_infra.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
 
 @Entity
 public class Application {
@@ -21,44 +22,25 @@ public class Application {
 
     private String ip;
 
+    @Getter
+    @ManyToOne
+    @JoinColumn(name = "app_service_id")
     @NotBlank(message = "Selecione 1 aplicação")
     private ServiceApplication appService;
 
-    @OneToOne
-    @JoinColumn(name = "app_database_id")
-    private DatabaseApplication appDatabase;
+    @Getter
+    @ManyToOne
+    @JoinColumn(name = "database_application_id")
+    private DatabaseApplication databaseApplication;
 
-    public Application(){};
-
-    public Long getAppId() {
-        return appId;
-    }
-
-    public void setAppId(Long appId) {
-        this.appId = appId;
-    }
-
-    public String getAppName() {
-        return appName;
-    }
-
-    public void setAppName(String appName) {
-        this.appName = appName;
-    }
-
-    public DatabaseApplication getAppDatabase() {
-        return appDatabase;
-    }
-
-    public void setAppDatabase(DatabaseApplication appDatabase) {
-        this.appDatabase = appDatabase;
-    }
-
-    public ServiceApplication getAppService() {
-        return appService;
+    public void setDatabaseApplication(DatabaseApplication databaseApplication) {
+        this.databaseApplication = databaseApplication;
     }
 
     public void setAppService(ServiceApplication appService) {
         this.appService = appService;
     }
+
+    public Application(){};
+
 }
