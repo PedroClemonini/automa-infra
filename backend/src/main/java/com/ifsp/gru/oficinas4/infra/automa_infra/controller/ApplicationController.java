@@ -6,27 +6,28 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api/application")
 @Tag(name = "Aplicações", description = "Endpoints para criacoes de VMs")
+@RequiredArgsConstructor
 public class ApplicationController {
 
-    @Autowired
-    private ApplicationRepository applicationRepository;
+    private final ApplicationRepository applicationRepository;
 
     @Operation(summary = "Lista todas as VMs", description = "Retorna uma lista com todas as VMs cadastradas.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso")
     })
     @GetMapping
-    public List<Application> getAllApplications(){
-        return  applicationRepository.findAll();
-    };
+    public Flux<Application> getAllApplications() {
+        // Converte a lista síncrona do JPA para Flux
+        return Flux.fromIterable(applicationRepository.findAll());
+    }
 
     @Operation(summary = "Cria uma nova VM", description = "Cadastra uma nova VM no banco de dados.")
     @ApiResponses(value = {
@@ -34,7 +35,8 @@ public class ApplicationController {
             @ApiResponse(responseCode = "400", description = "Dados inválidos (ex: campos @NotBlank não preenchidos)")
     })
     @PostMapping
-    public Application createApplication(@RequestBody Application contact) {
-        return applicationRepository.save(contact);
+    public Mono<Application> createApplication(@RequestBody Application application) {
+        // Converte o retorno síncrono do JPA para Mono
+        return Mono.just(applicationRepository.save(application));
     }
 }
