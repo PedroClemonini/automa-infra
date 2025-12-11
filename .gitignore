@@ -12,7 +12,7 @@ target/
 .settings
 .springBeans
 .sts4-cache
-
+/backend/src/resources/.gitignore
 ### IntelliJ IDEA ###
 .idea
 *.iws
