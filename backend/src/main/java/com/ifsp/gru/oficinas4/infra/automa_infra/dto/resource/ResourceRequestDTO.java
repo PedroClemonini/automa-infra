@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.util.List;
+
 public record ResourceRequestDTO(
         @NotNull(message = "ID do tipo de recurso é obrigatório")
         Long resourceTypeId,
@@ -19,7 +21,7 @@ public record ResourceRequestDTO(
         String version,
 
         @Size(max = 10000, message = "Code snippet deve ter no máximo 10000 caracteres")
-        String codeSnippet,
+        List<String> codeSnippet,
 
         Boolean active // Se null, será tratado como true no service
 ) {}

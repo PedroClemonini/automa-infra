@@ -1,10 +1,19 @@
 package com.ifsp.gru.oficinas4.infra.automa_infra.model;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
-import java.util.Map;
+
 
 @Entity
 @Table(name = "applications")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class Application {
 
     @Id
@@ -24,11 +33,12 @@ public class Application {
     @Column(nullable = false, length = 20)
     private String status;
 
-    private Integer port;
+    @Column(nullable = false)
+    private String sshUser;
+    @Column(nullable = false)
+    private String sshPassword;
 
-    @Column(length = 20)
-    private String environment;
-
+    private String ipAddress;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -39,5 +49,4 @@ public class Application {
     @Column(name = "last_deployed_at")
     private LocalDateTime lastDeployedAt;
 
-    // getters/setters
 }

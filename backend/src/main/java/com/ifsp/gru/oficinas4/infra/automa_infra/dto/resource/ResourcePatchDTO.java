@@ -2,6 +2,8 @@ package com.ifsp.gru.oficinas4.infra.automa_infra.dto.resource;
 
 import jakarta.validation.constraints.Size;
 
+import java.util.List;
+
 public record ResourcePatchDTO(
         Long resourceTypeId,
 
@@ -15,7 +17,7 @@ public record ResourcePatchDTO(
         String version,
 
         @Size(max = 10000, message = "Code snippet deve ter no máximo 10000 caracteres")
-        String codeSnippet,
+        List<String> codeSnippet,
 
         Boolean active
 ) {}

@@ -1,0 +1,562 @@
+@startuml
+class com.ifsp.gru.oficinas4.infra.automa_infra.service.ApplicationService {
+- ApplicationRepository repository
+- ApplicationResourceRepository applicationResourceRepository
+- UserRepository userRepository
+- ResourceRepository resourceRepository
+- TerraformFileBuilder terraformFileBuilder
+- ApplicationResponseDTO toResponseDTO(Application)
+- Application toEntity(ApplicationRequestDTO,User)
++ Page<ApplicationResponseDTO> findAll(Pageable)
++ Page<ApplicationResponseDTO> searchByName(String,Pageable)
++ Page<ApplicationResponseDTO> findByStatus(String,Pageable)
++ Page<ApplicationResponseDTO> findByUserId(Long,Pageable)
++ Optional<ApplicationResponseDTO> findById(Long)
++ ApplicationResponseDTO findByIdOrThrow(Long)
++ ApplicationResponseDTO create(ApplicationRequestDTO)
++ Optional<ApplicationResponseDTO> update(Long,ApplicationPatchDTO)
++ ApplicationResponseDTO updateOrThrow(Long,ApplicationPatchDTO)
++ Optional<ApplicationResponseDTO> updateStatus(Long,String)
++ ApplicationResponseDTO updateStatusOrThrow(Long,String)
++ Optional<ApplicationResponseDTO> deploy(Long)
++ boolean delete(Long)
++ boolean exists(Long)
++ long count()
++ long countByStatus(String)
++ long countByUserId(Long)
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.dto.resourceType.ResourceTypePatchDTO {
+- String name
+- String description
++ String description()
++ String name()
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.Configuration.MapperConfig {
++ ModelMapper modelMapper()
+}
+
+interface com.ifsp.gru.oficinas4.infra.automa_infra.repository.UserRepository {
+~ Page<User> findByNameContainingIgnoreCase(String,Pageable)
+~ Optional<User> findByEmail(String)
+~ boolean existsByEmail(String)
+~ boolean existsByName(String)
+}
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.Configuration.StringListConverter {
+- {static} ObjectMapper objectMapper
++ String convertToDatabaseColumn(List<String>)
++ List<String> convertToEntityAttribute(String)
+}
+
+
+interface com.ifsp.gru.oficinas4.infra.automa_infra.repository.ApplicationResourceRepository {
+~ boolean existsByApplicationIdAndResourcesId(Long,Long)
+~ List<Resource> findResourcesByApplicationId(Long)
+}
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.exception.GlobalExceptionHandler {
++ ResponseEntity<ErrorResponse> handleResourceNotFound(ResourceNotFoundException,WebRequest)
++ ResponseEntity<ErrorResponse> handleDuplicateResource(DuplicateResourceException,WebRequest)
++ ResponseEntity<ErrorResponse> handleUnauthorized(RuntimeException,WebRequest)
++ ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException,WebRequest)
++ ResponseEntity<ValidationErrorResponse> handleValidationErrors(MethodArgumentNotValidException,WebRequest)
++ ResponseEntity<ErrorResponse> handleIllegalArgument(IllegalArgumentException,WebRequest)
++ ResponseEntity<ErrorResponse> handleGenericException(Exception,WebRequest)
++ ResponseEntity<?> handleUnreadableBody(HttpMessageNotReadableException)
+}
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.AutomaInfraApplication {
++ {static} void main(String[])
+}
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.dto.resourceType.ResourceTypeResponseDTO {
+- Long id
+- String name
+- String description
++ String description()
++ String name()
++ Long id()
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.dto.application.ApplicationPatchDTO {
+- String name
+- String description
+- String status
+- String sshUser
+- String sshPassword
++ boolean hasName()
++ boolean hasDescription()
++ boolean hasStatus()
++ boolean hasSshUser()
++ boolean hasSshPassword()
++ String sshPassword()
++ String status()
++ String description()
++ String sshUser()
++ String name()
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.dto.application.ApplicationRequestDTO {
+- Long userId
+- String name
+- String description
+- String status
+- String sshUser
+- String sshPassword
++ String status()
++ String description()
++ Long userId()
++ String name()
++ String sshPassword()
++ String sshUser()
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.controller.ResourceTypeController {
+- ResourceTypeService resourceTypeService
++ ResponseEntity<Page<ResourceTypeResponseDTO>> getAll(Pageable)
++ ResponseEntity<Page<ResourceTypeResponseDTO>> search(String,Pageable)
++ ResponseEntity<ResourceTypeResponseDTO> getById(Long)
++ ResponseEntity<ResourceTypeResponseDTO> create(ResourceTypeRequestDTO)
++ ResponseEntity<ResourceTypeResponseDTO> update(Long,ResourceTypePatchDTO)
++ ResponseEntity<Void> delete(Long)
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.exception.ErrorResponse {
+- int status
+- String message
+- LocalDateTime timestamp
+- String path
++ String message()
++ LocalDateTime timestamp()
++ String path()
++ int status()
+}
+
+
+interface com.ifsp.gru.oficinas4.infra.automa_infra.repository.ResourceRepository {
+~ Page<Resource> findByNameContainingIgnoreCase(String,Pageable)
+~ Page<Resource> findByResourceTypeId(Long,Pageable)
+~ Page<Resource> findByActive(Boolean,Pageable)
+~ long countByActive(Boolean)
+}
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.dto.applicationResource.ApplicationResourcePatchDTO {
+- Long applicationId
+- Long resourceId
++ Long applicationId()
++ Long resourceId()
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.dto.resource.ResourceResponseDTO {
+- Long id
+- Long resourceTypeId
+- String resourceTypeName
+- String name
+- String description
+- String version
+- List<String> codeSnippet
+- Boolean active
+- LocalDateTime createdAt
+- LocalDateTime updatedAt
++ Boolean active()
++ LocalDateTime createdAt()
++ String description()
++ LocalDateTime updatedAt()
++ Long resourceTypeId()
++ String resourceTypeName()
++ String name()
++ List<String> codeSnippet()
++ Long id()
++ String version()
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.exception.ResourceNotFoundException {
+}
+class com.ifsp.gru.oficinas4.infra.automa_infra.dto.application.ApplicationResponseDTO {
+- Long id
+- Long userId
+- String userName
+- String name
+- String description
+- String status
+- String sshUser
+- LocalDateTime createdAt
+- LocalDateTime updatedAt
+- LocalDateTime lastDeployedAt
++ Long userId()
++ String status()
++ LocalDateTime createdAt()
++ String description()
++ String sshUser()
++ LocalDateTime updatedAt()
++ String userName()
++ String name()
++ Long id()
++ LocalDateTime lastDeployedAt()
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.controller.ApplicationController {
+- ApplicationService applicationService
++ ResponseEntity<Page<ApplicationResponseDTO>> getAllApplications(Pageable)
++ ResponseEntity<Page<ApplicationResponseDTO>> searchApplicationByName(String,Pageable)
++ ResponseEntity<Page<ApplicationResponseDTO>> getApplicationsByStatus(String,Pageable)
++ ResponseEntity<Page<ApplicationResponseDTO>> getApplicationsByUser(Long,Pageable)
++ ResponseEntity<ApplicationResponseDTO> getApplicationById(Long)
++ ResponseEntity<ApplicationResponseDTO> createApplication(ApplicationRequestDTO)
++ ResponseEntity<ApplicationResponseDTO> updateApplication(Long,ApplicationPatchDTO)
++ ResponseEntity<ApplicationResponseDTO> updateApplicationStatus(Long,String)
++ ResponseEntity<ApplicationResponseDTO> deployApplication(Long)
++ ResponseEntity<Void> deleteApplication(Long)
++ ResponseEntity<Boolean> applicationExists(Long)
++ ResponseEntity<Long> countApplications()
++ ResponseEntity<Long> countApplicationsByStatus(String)
++ ResponseEntity<Long> countApplicationsByUser(Long)
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.dto.user.UserRequestDTO {
+- String name
+- String email
+- String password
+- String role
++ String email()
++ String password()
++ String role()
++ String name()
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.controller.ResourceController {
+- ResourceService resourceService
++ ResponseEntity<Page<ResourceResponseDTO>> getAllResources(Pageable)
++ ResponseEntity<Page<ResourceResponseDTO>> searchResourceByName(String,Pageable)
++ ResponseEntity<Page<ResourceResponseDTO>> getResourcesByType(Long,Pageable)
++ ResponseEntity<Page<ResourceResponseDTO>> getActiveResources(Pageable)
++ ResponseEntity<ResourceResponseDTO> getResourceById(Long)
++ ResponseEntity<ResourceResponseDTO> createResource(ResourceRequestDTO)
++ ResponseEntity<ResourceResponseDTO> updateResource(Long,ResourcePatchDTO)
++ ResponseEntity<ResourceResponseDTO> toggleActiveStatus(Long)
++ ResponseEntity<Void> deleteResource(Long)
++ ResponseEntity<Boolean> resourceExists(Long)
++ ResponseEntity<Long> countResources()
++ ResponseEntity<Long> countActiveResources()
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.dto.resourceType.ResourceTypeRequestDTO {
+- String name
+- String description
++ String description()
++ String name()
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.service.ApplicationResourceService {
+- ApplicationResourceRepository repository
+- ApplicationRepository applicationRepository
+- ResourceRepository resourceRepository
+- ApplicationResourceResponseDTO toResponseDTO(ApplicationResource)
+- ApplicationResource toEntity(ApplicationResourceRequestDTO)
++ Page<ApplicationResourceResponseDTO> findAll(Pageable)
++ Optional<ApplicationResourceResponseDTO> findById(Long)
++ ApplicationResourceResponseDTO findByIdOrThrow(Long)
++ ApplicationResourceResponseDTO create(ApplicationResourceRequestDTO)
++ Optional<ApplicationResourceResponseDTO> update(Long,ApplicationResourcePatchDTO)
++ boolean delete(Long)
++ boolean exists(Long)
++ long count()
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.terraform.TerraformFileBuilder {
+- File dir
+- String buildTerraformContent(Application,List<List<String>>)
+- boolean needsQuotes(String)
++ String buildAndApplyTerraformFile(Application,List<List<String>>)
+- String runCommand(String)
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.service.CustomUserDetailsService {
+- UserRepository userRepository
++ UserDetails loadUserByUsername(String)
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.dto.applicationResource.ApplicationResourceRequestDTO {
+- Long applicationId
+- Long resourceId
++ Long applicationId()
++ Long resourceId()
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.dto.resource.ResourceRequestDTO {
+- Long resourceTypeId
+- String name
+- String description
+- String version
+- List<String> codeSnippet
+- Boolean active
++ Long resourceTypeId()
++ String name()
++ String version()
++ List<String> codeSnippet()
++ String description()
++ Boolean active()
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.model.Application {
+- Long id
+- User createdBy
+- String name
+- String description
+- String status
+- String sshUser
+- String sshPassword
+- LocalDateTime createdAt
+- LocalDateTime updatedAt
+- LocalDateTime lastDeployedAt
+}
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.dto.applicationResource.ApplicationResourceResponseDTO {
+- Long id
+- Long applicationId
+- Long resourceId
+- LocalDateTime addedAt
++ LocalDateTime addedAt()
++ Long applicationId()
++ Long id()
++ Long resourceId()
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.dto.user.UserPatchDTO {
+- String name
+- String email
+- String password
+- String role
++ String password()
++ String role()
++ String name()
++ String email()
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.model.Resource {
+- Long id
+- ResourceType resourceType
+- String name
+- String description
+- String version
+- List<String> codeSnippet
+- Boolean active
+- LocalDateTime createdAt
+- LocalDateTime updatedAt
+}
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.model.User {
+- Long id
+- String name
+- String email
+- String password
+- String role
+}
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.controller.ApplicationResourcesController {
+- ApplicationResourceService applicationResourceService
++ ResponseEntity<Page<ApplicationResourceResponseDTO>> getAll(Pageable)
++ ResponseEntity<ApplicationResourceResponseDTO> getById(Long)
++ ResponseEntity<ApplicationResourceResponseDTO> create(ApplicationResourceRequestDTO)
++ ResponseEntity<ApplicationResourceResponseDTO> update(Long,ApplicationResourcePatchDTO)
++ ResponseEntity<Void> delete(Long)
++ ResponseEntity<Boolean> exists(Long)
++ ResponseEntity<Long> count()
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.exception.UnauthorizedException {
+}
+class com.ifsp.gru.oficinas4.infra.automa_infra.dto.user.UserResponseDTO {
+- Long id
+- String name
+- String email
+- String role
++ String role()
++ String name()
++ String email()
++ Long id()
+}
+
+
+interface com.ifsp.gru.oficinas4.infra.automa_infra.repository.ResourceTypeRepository {
+~ Page<ResourceType> findByNameContainingIgnoreCase(String,Pageable)
+~ boolean existsByNameIgnoreCase(String)
+}
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.service.ResourceService {
+- ResourceRepository resourceRepository
+- ResourceTypeRepository resourceTypeRepository
++ Page<ResourceResponseDTO> findAll(Pageable)
++ Optional<ResourceResponseDTO> findById(Long)
++ Page<ResourceResponseDTO> searchByName(String,Pageable)
++ Page<ResourceResponseDTO> findByResourceTypeId(Long,Pageable)
++ Page<ResourceResponseDTO> findByActive(Boolean,Pageable)
++ ResourceResponseDTO create(ResourceRequestDTO)
++ Optional<ResourceResponseDTO> update(Long,ResourcePatchDTO)
++ Optional<ResourceResponseDTO> toggleActive(Long)
++ boolean delete(Long)
++ boolean exists(Long)
++ long count()
++ long countByActive(Boolean)
+- ResourceResponseDTO toResponseDTO(Resource)
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.exception.DuplicateResourceException {
+}
+class com.ifsp.gru.oficinas4.infra.automa_infra.model.ApplicationResource {
+- Long id
+- Application application
+- Resource resources
+- LocalDateTime addedAt
+}
+
+interface com.ifsp.gru.oficinas4.infra.automa_infra.repository.ApplicationRepository {
+~ Page<Application> findByNameContainingIgnoreCase(String,Pageable)
+~ Page<Application> findByStatus(String,Pageable)
+~ List<Application> findByStatus(String)
+~ Page<Application> findByCreatedById(Long,Pageable)
+~ List<Application> findByCreatedById(Long)
+~ Page<Application> findByCreatedByIdAndStatus(Long,String,Pageable)
+~ Page<Application> findByNameContainingIgnoreCaseAndStatus(String,String,Pageable)
+~ Page<Application> findByCreatedAtAfter(LocalDateTime,Pageable)
+~ Page<Application> findByLastDeployedAtAfter(LocalDateTime,Pageable)
+~ Page<Application> findByLastDeployedAtIsNull(Pageable)
+~ long countByStatus(String)
+~ long countByCreatedById(Long)
+~ long countByCreatedByIdAndStatus(Long,String)
+~ Page<Application> findRecentApplicationsByUser(Long,Pageable)
+~ Page<Application> findRecentlyDeployed(LocalDateTime,Pageable)
+~ Page<Application> searchApplications(String,String,Long,Pageable)
+~ boolean existsByNameAndCreatedById(String,Long)
+~ Page<Application> findApplicationsNeedingAttention(LocalDateTime,Pageable)
+}
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.exception.ValidationErrorResponse {
+- int status
+- String message
+- LocalDateTime timestamp
+- String path
+- Map<String,String> errors
++ String path()
++ LocalDateTime timestamp()
++ String message()
++ Map<String,String> errors()
++ int status()
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.Configuration.SecurityConfig {
++ PasswordEncoder passwordEncoder()
++ SecurityFilterChain filterChain(HttpSecurity)
+}
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.dto.resource.ResourcePatchDTO {
+- Long resourceTypeId
+- String name
+- String description
+- String version
+- List<String> codeSnippet
+- Boolean active
++ Boolean active()
++ String name()
++ String version()
++ List<String> codeSnippet()
++ String description()
++ Long resourceTypeId()
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.service.UserService {
+- UserRepository userRepository
+- PasswordEncoder passwordEncoder
+- UserResponseDTO toResponseDTO(User)
+- User toEntity(UserRequestDTO)
++ Page<UserResponseDTO> findAll(Pageable)
++ Page<UserResponseDTO> searchByName(String,Pageable)
++ Optional<UserResponseDTO> findById(Long)
++ UserResponseDTO findByIdOrThrow(Long)
++ UserResponseDTO create(UserRequestDTO)
++ Optional<UserResponseDTO> update(Long,UserPatchDTO)
++ UserResponseDTO updateOrThrow(Long,UserPatchDTO)
++ boolean delete(Long)
++ void deleteOrThrow(Long)
++ boolean exists(Long)
++ boolean emailExists(String)
++ Optional<UserResponseDTO> findByEmail(String)
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.controller.UserController {
+- UserService userService
++ ResponseEntity<Page<UserResponseDTO>> getAllUsers(Pageable)
++ ResponseEntity<Page<UserResponseDTO>> searchUserByName(String,Pageable)
++ ResponseEntity<UserResponseDTO> getUserById(Long)
++ ResponseEntity<UserResponseDTO> createUser(UserRequestDTO)
++ ResponseEntity<UserResponseDTO> updateUser(Long,UserPatchDTO)
++ ResponseEntity<?> deleteUser(Long)
++ ResponseEntity<UserResponseDTO> getUserByEmail(String)
++ ResponseEntity<Boolean> userExists(Long)
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.service.ResourceTypeService {
+- ResourceTypeRepository repository
+- ResourceTypeResponseDTO toResponseDTO(ResourceType)
+- ResourceType toEntity(ResourceTypeRequestDTO)
++ Page<ResourceTypeResponseDTO> findAll(Pageable)
++ Page<ResourceTypeResponseDTO> searchByName(String,Pageable)
++ Optional<ResourceTypeResponseDTO> findById(Long)
++ ResourceTypeResponseDTO findByIdOrThrow(Long)
++ ResourceTypeResponseDTO create(ResourceTypeRequestDTO)
++ Optional<ResourceTypeResponseDTO> update(Long,ResourceTypePatchDTO)
++ ResourceTypeResponseDTO updateOrThrow(Long,ResourceTypePatchDTO)
++ boolean delete(Long)
++ void deleteOrThrow(Long)
++ boolean exists(Long)
++ boolean nameExists(String)
+}
+
+
+class com.ifsp.gru.oficinas4.infra.automa_infra.model.ResourceType {
+- Long id
+- String name
+- String description
+}
+
+
+
+org.springframework.data.jpa.repository.JpaRepository <|-- com.ifsp.gru.oficinas4.infra.automa_infra.repository.UserRepository
+jakarta.persistence.AttributeConverter <|.. com.ifsp.gru.oficinas4.infra.automa_infra.Configuration.StringListConverter
+org.springframework.data.jpa.repository.JpaRepository <|-- com.ifsp.gru.oficinas4.infra.automa_infra.repository.ApplicationResourceRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- com.ifsp.gru.oficinas4.infra.automa_infra.repository.ResourceRepository
+com.ifsp.gru.oficinas4.infra.automa_infra.exception.RuntimeException <|-- com.ifsp.gru.oficinas4.infra.automa_infra.exception.ResourceNotFoundException
+org.springframework.security.core.userdetails.UserDetailsService <|.. com.ifsp.gru.oficinas4.infra.automa_infra.service.CustomUserDetailsService
+com.ifsp.gru.oficinas4.infra.automa_infra.exception.RuntimeException <|-- com.ifsp.gru.oficinas4.infra.automa_infra.exception.UnauthorizedException
+org.springframework.data.jpa.repository.JpaRepository <|-- com.ifsp.gru.oficinas4.infra.automa_infra.repository.ResourceTypeRepository
+com.ifsp.gru.oficinas4.infra.automa_infra.exception.RuntimeException <|-- com.ifsp.gru.oficinas4.infra.automa_infra.exception.DuplicateResourceException
+org.springframework.data.jpa.repository.JpaRepository <|-- com.ifsp.gru.oficinas4.infra.automa_infra.repository.ApplicationRepository
+@enduml

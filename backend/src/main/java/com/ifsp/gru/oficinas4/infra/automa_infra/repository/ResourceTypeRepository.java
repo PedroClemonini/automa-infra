@@ -9,15 +9,9 @@ import java.util.Optional;
 
 public interface ResourceTypeRepository extends JpaRepository<ResourceType, Long> {
 
-    // Busca por nome contendo, ignorando maiúsculas/minúsculas
     Page<ResourceType> findByNameContainingIgnoreCase(String name, Pageable pageable);
 
-    // Verifica duplicação
     boolean existsByNameIgnoreCase(String name);
 
-
-    Optional<ResourceType> findByNameIgnoreCase(String name);
-
-    boolean existsByName(String name);
 
 }

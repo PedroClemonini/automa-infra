@@ -35,10 +35,6 @@ public class UserService {
         );
     }
 
-    /**
-     * Converte DTO de requisição para entidade User
-     * Método manual para criar nova instância
-     */
     private User toEntity(UserRequestDTO dto) {
         User user = new User();
         user.setName(dto.name());
@@ -52,6 +48,7 @@ public class UserService {
     public Page<UserResponseDTO> findAll(Pageable pageable) {
         Page<User> users = userRepository.findAll(pageable);
         return users.map(this::toResponseDTO);
+
     }
 
     @Transactional(readOnly = true)
@@ -75,33 +72,27 @@ public class UserService {
 
     @Transactional
     public UserResponseDTO create(UserRequestDTO dto) {
-        // Validação: verifica se email já existe
+
         if (userRepository.existsByEmail(dto.email())) {
             throw new DuplicateResourceException("Email já cadastrado: " + dto.email());
         }
 
-        // Validação: verifica se username já existe
+
         if (dto.name() != null && userRepository.existsByName(dto.name())) {
             throw new DuplicateResourceException("Username já cadastrado: " + dto.name());
         }
 
-        // Converte DTO para Entidade
         User user = toEntity(dto);
 
-        // Criptografa a senha
         String hashedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(hashedPassword);
 
-        // Salva no banco
+
         User savedUser = userRepository.save(user);
 
-        // Retorna DTO de resposta
         return toResponseDTO(savedUser);
     }
 
-    /**
-     * Atualiza parcialmente um usuário existente
-     */
     @Transactional
     public Optional<UserResponseDTO> update(Long id, UserPatchDTO dto) {
         Optional<User> optionalUser = userRepository.findById(id);
@@ -112,13 +103,13 @@ public class UserService {
 
         User existingUser = optionalUser.get();
 
-        // Atualiza apenas os campos fornecidos (não nulos)
+
         if (dto.name() != null && !dto.name().isBlank()) {
             existingUser.setName(dto.name());
         }
 
         if (dto.email() != null && !dto.email().isBlank()) {
-            // Verifica se o novo email já existe em outro usuário
+
             if (!existingUser.getEmail().equals(dto.email()) &&
                     userRepository.existsByEmail(dto.email())) {
                 throw new DuplicateResourceException("Email já cadastrado: " + dto.email());
@@ -135,7 +126,7 @@ public class UserService {
             existingUser.setRole(dto.role());
         }
 
-        // Salva as alterações
+
         User updatedUser = userRepository.save(existingUser);
 
         return Optional.of(toResponseDTO(updatedUser));
@@ -154,6 +145,7 @@ public class UserService {
         }
         userRepository.deleteById(id);
         return true;
+
     }
 
     @Transactional

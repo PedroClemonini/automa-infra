@@ -59,7 +59,6 @@ public class ResourceService {
 
     @Transactional
     public ResourceResponseDTO create(ResourceRequestDTO dto) {
-        // Verifica se o ResourceType existe
         ResourceType resourceType = resourceTypeRepository.findById(dto.resourceTypeId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Tipo de recurso não encontrado com ID: " + dto.resourceTypeId()
@@ -85,7 +84,7 @@ public class ResourceService {
     public Optional<ResourceResponseDTO> update(Long id, ResourcePatchDTO dto) {
         return resourceRepository.findById(id).map(resource -> {
 
-            // Atualiza resourceType se fornecido
+
             if (dto.resourceTypeId() != null) {
                 ResourceType resourceType = resourceTypeRepository.findById(dto.resourceTypeId())
                         .orElseThrow(() -> new ResourceNotFoundException(
@@ -94,27 +93,27 @@ public class ResourceService {
                 resource.setResourceType(resourceType);
             }
 
-            // Atualiza nome se fornecido
+
             if (dto.name() != null && !dto.name().isBlank()) {
                 resource.setName(dto.name());
             }
 
-            // Atualiza descrição se fornecida
+
             if (dto.description() != null && !dto.description().isBlank()) {
                 resource.setDescription(dto.description());
             }
 
-            // Atualiza versão se fornecida
+
             if (dto.version() != null && !dto.version().isBlank()) {
                 resource.setVersion(dto.version());
             }
 
-            // Atualiza codeSnippet se fornecido
-            if (dto.codeSnippet() != null && !dto.codeSnippet().isBlank()) {
+
+            if (dto.codeSnippet() != null && !dto.codeSnippet().isEmpty()) {
                 resource.setCodeSnippet(dto.codeSnippet());
             }
 
-            // Atualiza active se fornecido
+
             if (dto.active() != null) {
                 resource.setActive(dto.active());
             }

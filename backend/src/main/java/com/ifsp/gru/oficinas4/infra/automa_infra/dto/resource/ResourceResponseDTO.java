@@ -1,6 +1,7 @@
 package com.ifsp.gru.oficinas4.infra.automa_infra.dto.resource;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record ResourceResponseDTO(
         Long id,
@@ -9,7 +10,7 @@ public record ResourceResponseDTO(
         String name,
         String description,
         String version,
-        String codeSnippet,
+        List<String> codeSnippet,
         Boolean active,
         LocalDateTime createdAt,
         LocalDateTime updatedAt

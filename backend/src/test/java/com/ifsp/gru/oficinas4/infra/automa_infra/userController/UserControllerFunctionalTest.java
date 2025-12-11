@@ -56,8 +56,6 @@ class UserControllerFunctionalTest {
     void setUp() {
         // Limpa o banco
         userRepository.deleteAll();
-
-        // Cria usuário de teste no banco
         testUser = new User();
         testUser.setName("João Silva");
         testUser.setEmail("joao@email.com");
@@ -65,7 +63,6 @@ class UserControllerFunctionalTest {
         testUser.setRole("COMMON");
         testUser = userRepository.save(testUser);
 
-        // DTO para criar novos usuários
         userRequestDTO = new UserRequestDTO(
                 "Maria Santos",
                 "maria@email.com",
@@ -74,7 +71,6 @@ class UserControllerFunctionalTest {
         );
     }
 
-    // ==================== TESTES DE LISTAGEM ====================
 
     @Test
     @DisplayName("GET /api/users - Deve listar todos os usuários com sucesso")

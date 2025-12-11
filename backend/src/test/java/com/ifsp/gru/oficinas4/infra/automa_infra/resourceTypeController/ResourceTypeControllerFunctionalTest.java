@@ -48,18 +48,16 @@ class ResourceTypeControllerFunctionalTest {
 
     @BeforeEach
     void setUp() {
-        // Limpa o banco
+
         resourceTypeRepository.deleteAll();
 
-        // Cria tipo de recurso de teste no banco
         testResourceType = new ResourceType();
         testResourceType.setName("Servidor");
         testResourceType.setDescription("Servidor de aplicação");
         testResourceType = resourceTypeRepository.save(testResourceType);
 
-        // DTO para criar novos tipos de recurso
-        resourceTypeRequestDTO = new ResourceTypeRequestDTO("Banco de Dados","Sistema de gerenciamento de banco de dados");
-        ;
+
+        resourceTypeRequestDTO = new ResourceTypeRequestDTO("Banco de Dados","Sistema de gerenciamento de banco de dados");;
     }
 
     @Test
@@ -82,7 +80,7 @@ class ResourceTypeControllerFunctionalTest {
     @DisplayName("GET /api/resource-types?page=0&size=5 - Deve listar com paginação")
     @WithMockUser
     void testGetAllResourceTypes_WithPagination() throws Exception {
-        // Cria mais tipos de recurso para testar paginação
+
         for (int i = 0; i < 10; i++) {
             ResourceType resourceType = new ResourceType();
             resourceType.setName("Recurso " + i);
@@ -115,7 +113,7 @@ class ResourceTypeControllerFunctionalTest {
                 .andExpect(jsonPath("$.totalElements").value(0));
     }
 
-    // ==================== TESTES DE BUSCA ====================
+
 
     @Test
     @DisplayName("GET /api/resource-types/{id} - Deve buscar tipo de recurso por ID com sucesso")
@@ -180,7 +178,7 @@ class ResourceTypeControllerFunctionalTest {
     @DisplayName("GET /api/resource-types/search - Deve buscar parcialmente pelo nome")
     @WithMockUser
     void testSearchResourceTypeByName_PartialMatch() throws Exception {
-        // Cria tipos de recurso com nomes similares
+
         ResourceType rt2 = new ResourceType();
         rt2.setName("Servidor Web");
         rt2.setDescription("Servidor web Apache");
@@ -191,7 +189,7 @@ class ResourceTypeControllerFunctionalTest {
         rt3.setDescription("Servidor SMTP");
         resourceTypeRepository.save(rt3);
 
-        // Busca por "Servidor" deve retornar todos os três
+
         mockMvc.perform(get("/api/resource-types/search")
                         .param("name", "Servidor")
                         .contentType(MediaType.APPLICATION_JSON))

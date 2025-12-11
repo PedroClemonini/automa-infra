@@ -50,9 +50,6 @@ CREATE TABLE applications (
     name VARCHAR(255) NOT NULL,
     description TEXT,
     status VARCHAR(20) NOT NULL,
-    port INTEGER,
-    environment VARCHAR(20),
-    config JSONB,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP,
     last_deployed_at TIMESTAMP

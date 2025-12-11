@@ -95,9 +95,9 @@ public class ResourceTypeService {
 
         ResourceType existing = optional.get();
 
-        // ✅ Atualiza NOME apenas se não for null e não estiver vazio
+
         if (dto.name() != null && !dto.name().isBlank()) {
-            // Verifica duplicação apenas se o nome está sendo alterado
+
             if (!existing.getName().equalsIgnoreCase(dto.name())
                     && repository.existsByNameIgnoreCase(dto.name())) {
                 throw new DuplicateResourceException(
@@ -107,7 +107,7 @@ public class ResourceTypeService {
             existing.setName(dto.name());
         }
 
-        // ✅ Atualiza DESCRIÇÃO apenas se não for null e não estiver vazio
+
         if (dto.description() != null && !dto.description().isBlank()) {
             existing.setDescription(dto.description());
         }

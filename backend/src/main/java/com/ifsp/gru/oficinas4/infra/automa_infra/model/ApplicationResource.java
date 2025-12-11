@@ -9,11 +9,11 @@ import java.util.Map;
 
 @Entity
 @Table(name = "application_resources", uniqueConstraints = @UniqueConstraint(columnNames = {"application_id", "resource_id"}))
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 public class ApplicationResource {
 
     @Id
@@ -24,13 +24,10 @@ public class ApplicationResource {
     @JoinColumn(name = "application_id")
     private Application application;
 
-    @ManyToMany
-    @JoinTable(
-            name = "application_resource_mapping",  // Nome da tabela intermediária
-            joinColumns = @JoinColumn(name = "application_resource_id"),  // FK para ApplicationResource
-            inverseJoinColumns = @JoinColumn(name = "resource_id")  // FK para Resource
-    )
-    private List<Resource> resources;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "resource_id", nullable = false)
+    private Resource resources;
 
     @Column(name = "added_at")
     private LocalDateTime addedAt = LocalDateTime.now();
